@@ -1,77 +1,96 @@
-// src/pages/Contacts.jsx
+// src/pages/Deals.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Container, Table, Alert, Spinner, Button } from 'react-bootstrap';
 import EditableCell from '../components/EditableCell';
-import PopupCreateContact from '../components/PopupCreateContact';
-import PopupEditContact from '../components/PopupEditContact';
+import PopupCreateDeal from '../components/PopupCreateDeal';
+import PopupEditDeal from '../components/PopupEditDeal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import EditableSelect from '../components/EditableSelect';
 
-function Contacts() {
-  const [contacts, setContacts] = useState([]);
+function Deals() {
+  const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [selectedDeal, setSelectedDeal] = useState(null);
   
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [employees, setEmployees] = useState([]);
   const token = localStorage.getItem('token');
 
-  const fetchContacts = useCallback(async () => {
+  const fetchDeals = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/contacts',
+        'http://' + window.location.hostname + ':8000/api/deals',
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setContacts(response.data);
+      setDeals(response.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка загрузки контактов');
+      setError(err.response?.data?.message || 'Ошибка загрузки сделок');
       setLoading(false);
     }
   }, [token]);
 
-  useEffect(() => {
-    fetchContacts();
-  }, [fetchContacts]);
+  const fetchEmployees = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        'http://' + window.location.hostname + ':8000/api/users',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const options = response.data.map(user => ({
+        value: user.id,
+        label: user.name,
+      }));
+      setEmployees(options);
+    } catch (err) {
+      console.error("Ошибка загрузки сотрудников:", err.response?.data?.message);
+    }
+  }, [token]);
 
-  const handleUpdateContact = async (id, field, newValue) => {
+  useEffect(() => {
+    fetchDeals();
+    fetchEmployees();
+  }, [fetchDeals, fetchEmployees]);
+
+  const handleUpdateDeal = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `:8000/api/contacts/${id}`,
+        'http://' + window.location.hostname + `:8000/api/deals/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setContacts(prev =>
-        prev.map(contact =>
-          contact.id === id ? { ...contact, [field]: newValue } : contact
+      setDeals(prev =>
+        prev.map(deal =>
+          deal.id === id ? { ...deal, [field]: newValue } : deal
         )
       );
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка обновления контакта');
+      setError(err.response?.data?.message || 'Ошибка обновления сделки');
     }
   };
 
-  const handleDeleteContact = async () => {
+  const handleDeleteDeal = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `:8000/api/contacts/${selectedContact.id}`,
+        'http://' + window.location.hostname + `:8000/api/deals/${selectedDeal.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);
-      fetchContacts();
+      fetchDeals();
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка удаления контакта');
+      setError(err.response?.data?.message || 'Ошибка удаления сделки');
     }
   };
 
   return (
     <Container className="mt-5">
-      <h2>Контакты</h2>
+      <h2>Сделки</h2>
       <Button variant="primary" onClick={() => setShowCreatePopup(true)} className="mb-3">
-        Создать контакт
+        Создать сделку
       </Button>
       {loading && (
         <div className="text-center my-3">
@@ -84,55 +103,47 @@ function Contacts() {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Имя</th>
-              <th>Фамилия</th>
-              <th>Email</th>
-              <th>Телефон</th>
-              <th>Должность</th>
+              <th>Название</th>
+              <th>Бюджет</th>
+              <th>Статус</th>
+              <th>Ответственный</th>
               <th>Действия</th>
             </tr>
           </thead>
           <tbody>
-            {contacts.map(contact => (
-              <tr key={contact.id}>
-                <td>{contact.id}</td>
+            {deals.map(deal => (
+              <tr key={deal.id}>
+                <td>{deal.id}</td>
                 <td>
                   <EditableCell
-                    value={contact.first_name}
+                    value={deal.title}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'first_name', newValue)
+                      handleUpdateDeal(deal.id, 'title', newValue)
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.last_name}
+                    value={deal.budget ? deal.budget.toString() : ''}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'last_name', newValue)
+                      handleUpdateDeal(deal.id, 'budget', parseFloat(newValue))
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.email}
+                    value={deal.status}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'email', newValue)
+                      handleUpdateDeal(deal.id, 'status', newValue)
                     }
                   />
                 </td>
                 <td>
-                  <EditableCell
-                    value={contact.phone}
+                  <EditableSelect
+                    value={deal.responsible_user_id}
+                    options={employees}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'phone', newValue)
-                    }
-                  />
-                </td>
-                <td>
-                  <EditableCell
-                    value={contact.position}
-                    onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'position', newValue)
+                      handleUpdateDeal(deal.id, 'responsible_user_id', newValue)
                     }
                   />
                 </td>
@@ -141,7 +152,7 @@ function Contacts() {
                     variant="warning"
                     size="sm"
                     onClick={() => {
-                      setSelectedContact(contact);
+                      setSelectedDeal(deal);
                       setShowEditPopup(true);
                     }}
                     className="me-2"
@@ -152,7 +163,7 @@ function Contacts() {
                     variant="danger"
                     size="sm"
                     onClick={() => {
-                      setSelectedContact(contact);
+                      setSelectedDeal(deal);
                       setShowDeletePopup(true);
                     }}
                   >
@@ -165,31 +176,31 @@ function Contacts() {
         </Table>
       )}
 
-      <PopupCreateContact
+      <PopupCreateDeal
         show={showCreatePopup}
         onClose={() => setShowCreatePopup(false)}
-        onSuccess={fetchContacts}
+        onSuccess={fetchDeals}
       />
 
-      {selectedContact && (
-        <PopupEditContact
+      {selectedDeal && (
+        <PopupEditDeal
           show={showEditPopup}
           onClose={() => setShowEditPopup(false)}
-          onSuccess={fetchContacts}
-          contact={selectedContact}
+          onSuccess={fetchDeals}
+          deal={selectedDeal}
         />
       )}
 
-      {selectedContact && (
+      {selectedDeal && (
         <DeleteConfirmationModal
           show={showDeletePopup}
           onClose={() => setShowDeletePopup(false)}
-          onConfirm={handleDeleteContact}
-          contact={selectedContact}
+          onConfirm={handleDeleteDeal}
+          contact={selectedDeal}
         />
       )}
     </Container>
   );
 }
 
-export default Contacts;
+export default Deals;

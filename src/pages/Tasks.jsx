@@ -1,78 +1,81 @@
-// src/pages/Contacts.jsx
+// src/pages/Tasks.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Container, Table, Alert, Spinner, Button } from 'react-bootstrap';
 import EditableCell from '../components/EditableCell';
-import PopupCreateContact from '../components/PopupCreateContact';
-import PopupEditContact from '../components/PopupEditContact';
+import PopupCreateTask from '../components/PopupCreateTask';
+import PopupEditTask from '../components/PopupEditTask';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
-function Contacts() {
-  const [contacts, setContacts] = useState([]);
+function Tasks() {
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
+  // Состояния для попапов редактирования и подтверждения удаления
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   
-  const [selectedContact, setSelectedContact] = useState(null);
+  // Храним текущую задачу для редактирования/удаления
+  const [selectedTask, setSelectedTask] = useState(null);
   const token = localStorage.getItem('token');
 
-  const fetchContacts = useCallback(async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/contacts',
+        'http://' + window.location.hostname + ':8000/api/tasks',
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setContacts(response.data);
+      setTasks(response.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка загрузки контактов');
+      setError(err.response?.data?.message || 'Ошибка загрузки заданий');
       setLoading(false);
     }
   }, [token]);
 
   useEffect(() => {
-    fetchContacts();
-  }, [fetchContacts]);
+    fetchTasks();
+  }, [fetchTasks]);
 
-  const handleUpdateContact = async (id, field, newValue) => {
+  const handleUpdateTask = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `:8000/api/contacts/${id}`,
+        'http://' + window.location.hostname + `:8000/api/tasks/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setContacts(prev =>
-        prev.map(contact =>
-          contact.id === id ? { ...contact, [field]: newValue } : contact
+      setTasks(prev =>
+        prev.map(task =>
+          task.id === id ? { ...task, [field]: newValue } : task
         )
       );
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка обновления контакта');
+      setError(err.response?.data?.message || 'Ошибка обновления задания');
     }
   };
 
-  const handleDeleteContact = async () => {
+  const handleDeleteTask = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `:8000/api/contacts/${selectedContact.id}`,
+        'http://' + window.location.hostname + `:8000/api/tasks/${selectedTask.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);
-      fetchContacts();
+      fetchTasks();
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка удаления контакта');
+      setError(err.response?.data?.message || 'Ошибка удаления задания');
     }
   };
 
   return (
     <Container className="mt-5">
-      <h2>Контакты</h2>
+      <h2>Задания</h2>
       <Button variant="primary" onClick={() => setShowCreatePopup(true)} className="mb-3">
-        Создать контакт
+        Создать задание
       </Button>
+
       {loading && (
         <div className="text-center my-3">
           <Spinner animation="border" variant="primary" />
@@ -84,55 +87,55 @@ function Contacts() {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Имя</th>
-              <th>Фамилия</th>
-              <th>Email</th>
-              <th>Телефон</th>
-              <th>Должность</th>
+              <th>Текст задания</th>
+              <th>Результат</th>
+              <th>Тип</th>
+              <th>Начало исполнения</th>
+              <th>Конец исполнения</th>
               <th>Действия</th>
             </tr>
           </thead>
           <tbody>
-            {contacts.map(contact => (
-              <tr key={contact.id}>
-                <td>{contact.id}</td>
+            {tasks.map(task => (
+              <tr key={task.id}>
+                <td>{task.id}</td>
                 <td>
                   <EditableCell
-                    value={contact.first_name}
+                    value={task.task_text}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'first_name', newValue)
+                      handleUpdateTask(task.id, 'task_text', newValue)
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.last_name}
+                    value={task.result || ''}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'last_name', newValue)
+                      handleUpdateTask(task.id, 'result', newValue)
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.email}
+                    value={task.type}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'email', newValue)
+                      handleUpdateTask(task.id, 'type', newValue)
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.phone}
+                    value={task.execution_start}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'phone', newValue)
+                      handleUpdateTask(task.id, 'execution_start', newValue)
                     }
                   />
                 </td>
                 <td>
                   <EditableCell
-                    value={contact.position}
+                    value={task.execution_end}
                     onSave={(newValue) =>
-                      handleUpdateContact(contact.id, 'position', newValue)
+                      handleUpdateTask(task.id, 'execution_end', newValue)
                     }
                   />
                 </td>
@@ -141,7 +144,7 @@ function Contacts() {
                     variant="warning"
                     size="sm"
                     onClick={() => {
-                      setSelectedContact(contact);
+                      setSelectedTask(task);
                       setShowEditPopup(true);
                     }}
                     className="me-2"
@@ -152,7 +155,7 @@ function Contacts() {
                     variant="danger"
                     size="sm"
                     onClick={() => {
-                      setSelectedContact(contact);
+                      setSelectedTask(task);
                       setShowDeletePopup(true);
                     }}
                   >
@@ -165,31 +168,31 @@ function Contacts() {
         </Table>
       )}
 
-      <PopupCreateContact
+      <PopupCreateTask
         show={showCreatePopup}
         onClose={() => setShowCreatePopup(false)}
-        onSuccess={fetchContacts}
+        onSuccess={fetchTasks}
       />
 
-      {selectedContact && (
-        <PopupEditContact
+      {selectedTask && (
+        <PopupEditTask
           show={showEditPopup}
           onClose={() => setShowEditPopup(false)}
-          onSuccess={fetchContacts}
-          contact={selectedContact}
+          onSuccess={fetchTasks}
+          task={selectedTask}
         />
       )}
 
-      {selectedContact && (
+      {selectedTask && (
         <DeleteConfirmationModal
           show={showDeletePopup}
           onClose={() => setShowDeletePopup(false)}
-          onConfirm={handleDeleteContact}
-          contact={selectedContact}
+          onConfirm={handleDeleteTask}
+          contact={selectedTask}
         />
       )}
     </Container>
   );
 }
 
-export default Contacts;
+export default Tasks;

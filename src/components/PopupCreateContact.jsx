@@ -10,7 +10,6 @@ const PopupCreateContact = ({ show, onClose, onSuccess, crmId }) => {
     phone: '',
     position: '',
     company_id: '',
-    crm_id: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +24,7 @@ const PopupCreateContact = ({ show, onClose, onSuccess, crmId }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://'+window.location.hostname+':8000/api/contacts', formData, {
+      await axios.post('http://'+window.location.hostname+':8000/api/contacts', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLoading(false);
@@ -103,15 +102,6 @@ const PopupCreateContact = ({ show, onClose, onSuccess, crmId }) => {
               value={formData.company_id}
               onChange={handleChange}
               placeholder="Опционально"
-            />
-          </Form.Group>
-          <Form.Group controlId="crmId" className="mb-3">
-            <Form.Label>ID CRM</Form.Label>
-            <Form.Control
-              type="text"
-              name="crm_id"
-              value={formData.crm_id}
-              onChange={handleChange}
             />
           </Form.Group>
           <Button variant="primary" type="submit" disabled={loading}>

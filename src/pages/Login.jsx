@@ -18,8 +18,9 @@ function Login() {
     setError('');
     try {
       const response = await axios.post('http://'+window.location.hostname+':8000/api/login', formData);
-      const { token } = response.data;
+      const { token, user } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Ошибка входа');

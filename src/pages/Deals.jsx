@@ -24,7 +24,7 @@ function Deals() {
   const fetchDeals = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/deals',
+        'http://' + window.location.hostname + '/api/deals',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setDeals(response.data);
@@ -38,7 +38,7 @@ function Deals() {
   const fetchEmployees = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/users',
+        'http://' + window.location.hostname + '/api/users',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const options = response.data.map(user => ({
@@ -59,7 +59,7 @@ function Deals() {
   const handleUpdateDeal = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `:8000/api/deals/${id}`,
+        'http://' + window.location.hostname + `/api/deals/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -76,7 +76,7 @@ function Deals() {
   const handleDeleteDeal = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `:8000/api/deals/${selectedDeal.id}`,
+        'http://' + window.location.hostname + `/api/deals/${selectedDeal.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);

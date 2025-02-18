@@ -24,7 +24,7 @@ function Tasks() {
   const fetchTasks = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/tasks',
+        'http://' + window.location.hostname + '/api/tasks',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTasks(response.data);
@@ -42,7 +42,7 @@ function Tasks() {
   const handleUpdateTask = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `:8000/api/tasks/${id}`,
+        'http://' + window.location.hostname + `/api/tasks/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,7 +59,7 @@ function Tasks() {
   const handleDeleteTask = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `:8000/api/tasks/${selectedTask.id}`,
+        'http://' + window.location.hostname + `/api/tasks/${selectedTask.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);

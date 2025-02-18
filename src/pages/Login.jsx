@@ -17,7 +17,7 @@ function Login() {
     e.preventDefault();
     setError('');
     try {
-      const response = await axios.post('http://'+window.location.hostname+':8000/api/login', formData);
+      const response = await axios.post('http://'+window.location.hostname+'/api/login', formData);
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));

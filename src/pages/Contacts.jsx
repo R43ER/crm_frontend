@@ -22,7 +22,7 @@ function Contacts() {
   const fetchContacts = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + ':8000/api/contacts',
+        'http://' + window.location.hostname + '/api/contacts',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setContacts(response.data);
@@ -40,7 +40,7 @@ function Contacts() {
   const handleUpdateContact = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `:8000/api/contacts/${id}`,
+        'http://' + window.location.hostname + `/api/contacts/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -57,7 +57,7 @@ function Contacts() {
   const handleDeleteContact = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `:8000/api/contacts/${selectedContact.id}`,
+        'http://' + window.location.hostname + `/api/contacts/${selectedContact.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);

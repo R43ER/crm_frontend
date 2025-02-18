@@ -28,7 +28,7 @@ function Register() {
 
     try {
       // Если у вас настроен proxy в package.json, можно использовать относительный URL
-      const response = await axios.post('http://'+window.location.hostname+':8000/api/register', formData);
+      const response = await axios.post('http://'+window.location.hostname+'/api/register', formData);
       setSuccess(response.data.message);
       
       // Сохраняем полученный токен, если API его возвращает

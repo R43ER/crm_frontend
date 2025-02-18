@@ -24,7 +24,7 @@ const PopupCreateCompany = ({ show, onClose, onSuccess }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://' + window.location.hostname + '/api/companies',
+        'http://' + window.location.hostname + '/api/api/companies',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

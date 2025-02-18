@@ -24,7 +24,7 @@ const PopupCreateContact = ({ show, onClose, onSuccess, crmId }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://'+window.location.hostname+'/api/contacts', formData, {
+      await axios.post('http://'+window.location.hostname+'/api/api/contacts', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLoading(false);

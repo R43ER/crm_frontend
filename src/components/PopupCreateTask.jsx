@@ -26,7 +26,7 @@ const PopupCreateTask = ({ show, onClose, onSuccess }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://' + window.location.hostname + '/api/tasks',
+        'http://' + window.location.hostname + '/api/api/tasks',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

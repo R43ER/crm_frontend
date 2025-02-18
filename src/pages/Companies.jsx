@@ -23,7 +23,7 @@ function Companies() {
   const fetchCompanies = useCallback(async () => {
     try {
       const response = await axios.get(
-        'http://' + window.location.hostname + '/api/companies',
+        'http://' + window.location.hostname + '/api/api/companies',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCompanies(response.data);
@@ -41,7 +41,7 @@ function Companies() {
   const handleUpdateCompany = async (id, field, newValue) => {
     try {
       await axios.put(
-        'http://' + window.location.hostname + `/api/companies/${id}`,
+        'http://' + window.location.hostname + `/api/api/companies/${id}`,
         { [field]: newValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -58,7 +58,7 @@ function Companies() {
   const handleDeleteCompany = async () => {
     try {
       await axios.delete(
-        'http://' + window.location.hostname + `/api/companies/${selectedCompany.id}`,
+        'http://' + window.location.hostname + `/api/api/companies/${selectedCompany.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeletePopup(false);

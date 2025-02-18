@@ -17,7 +17,7 @@ const PopupCreateDeal = ({ show, onClose, onSuccess }) => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    axios.get(`http://${window.location.hostname}/api/users`, {
+    axios.get(`http://${window.location.hostname}/api/api/users`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(response => {
@@ -52,7 +52,7 @@ const PopupCreateDeal = ({ show, onClose, onSuccess }) => {
     setLoading(true);
     try {
       await axios.post(
-        `http://${window.location.hostname}/api/deals`,
+        `http://${window.location.hostname}/api/api/deals`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

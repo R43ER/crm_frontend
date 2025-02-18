@@ -26,7 +26,7 @@ function CreateCRM() {
     setSuccess('');
     try {
       // Отправляем POST-запрос на API для создания новой CRM
-      const response = await axios.post('http://'+window.location.hostname+'/api/crms', formData);
+      const response = await axios.post('http://'+window.location.hostname+'/api/api/crms', formData);
       setSuccess(response.data.message || 'CRM успешно создана');
       
       // Можно сохранить данные, если нужно, или перенаправить пользователя

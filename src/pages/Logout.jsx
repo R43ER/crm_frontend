@@ -11,7 +11,7 @@ function Logout() {
     // Отправляем POST-запрос на API для выхода
     axios
       .post(
-        'http://'+window.location.hostname+'/api/logout',
+        'http://'+window.location.hostname+'/api/api/logout',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )

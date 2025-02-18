@@ -37,7 +37,7 @@ const PopupEditTask = ({ show, onClose, onSuccess, task }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        'http://' + window.location.hostname + `/api/tasks/${task.id}`,
+        'http://' + window.location.hostname + `/api/api/tasks/${task.id}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

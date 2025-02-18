@@ -39,7 +39,7 @@ const PopupEditContact = ({ show, onClose, onSuccess, contact }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://'+window.location.hostname+`/api/contacts/${contact.id}`, formData, {
+      await axios.put('http://'+window.location.hostname+`/api/api/contacts/${contact.id}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLoading(false);

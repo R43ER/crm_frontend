@@ -28,7 +28,7 @@ const PopupEditDeal = ({ show, onClose, onSuccess, deal }) => {
   }, [deal]);
 
   useEffect(() => {
-    axios.get(`http://${window.location.hostname}/api/users`, {
+    axios.get(`http://${window.location.hostname}/api/api/users`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(response => {
@@ -64,7 +64,7 @@ const PopupEditDeal = ({ show, onClose, onSuccess, deal }) => {
     setLoading(true);
     try {
       await axios.put(
-        `http://${window.location.hostname}/api/deals/${deal.id}`,
+        `http://${window.location.hostname}/api/api/deals/${deal.id}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
